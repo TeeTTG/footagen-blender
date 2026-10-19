@@ -16,6 +16,8 @@ import urllib.request
 import zipfile
 
 BASE = "https://download.blender.org/release"
+# download.blender.org refuses Python's default User-Agent.
+HEADERS = {"User-Agent": "footagen-blender-ci (+https://github.com/TeeTTG/footagen-blender)"}
 
 
 def asset_name(version):
@@ -36,8 +38,12 @@ def executable(dest, version):
     return os.path.join(dest, f"blender-{version}-linux-x64", "blender")
 
 
+def open_url(url, timeout):
+    return urllib.request.urlopen(urllib.request.Request(url, headers=HEADERS), timeout=timeout)
+
+
 def download(url, path):
-    with urllib.request.urlopen(url, timeout=120) as response, open(path, "wb") as handle:
+    with open_url(url, 120) as response, open(path, "wb") as handle:
         shutil.copyfileobj(response, handle, length=1024 * 1024)
 
 
@@ -50,7 +56,7 @@ def main():
     os.makedirs(dest, exist_ok=True)
     series = ".".join(version.split(".")[:2])
     name = asset_name(version)
-    with urllib.request.urlopen(f"{BASE}/Blender{series}/blender-{version}.sha256", timeout=60) as response:
+    with open_url(f"{BASE}/Blender{series}/blender-{version}.sha256", 60) as response:
         sums = dict(line.split()[::-1] for line in response.read().decode().splitlines() if line.strip())
     archive = os.path.join(dest, name)
     download(f"{BASE}/Blender{series}/{name}", archive)

@@ -132,8 +132,8 @@ def make_handler(relay, base_url_holder):
                 relay.pairings[device_code] = {"code": code, "status": "pending", "info": body, "user": None, "name": None}
                 return self._send(200, {
                     "userCode": f"{code[:4]}-{code[4:]}", "deviceCode": device_code,
-                    "verificationUri": f"{base_url_holder[0]}/connect",
-                    "verificationUriComplete": f"{base_url_holder[0]}/connect?code={code}",
+                    "verificationUri": f"{base_url_holder[0]}/?connect",
+                    "verificationUriComplete": f"{base_url_holder[0]}/?connect={code}",
                     "expiresIn": 600, "interval": 5,
                 })
             if (method, path) == ("POST", "/v1/connect/pair/poll"):

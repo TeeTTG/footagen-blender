@@ -47,7 +47,10 @@ jobs:
       - name: Download Blender (checksum verified)
         id: blender
         shell: bash
-        run: echo "exe=$(python scripts/fetch_blender.py ${{ matrix.blender }} .blender | tail -n 1)" >> "$GITHUB_OUTPUT"
+        run: |
+          exe="$(python scripts/fetch_blender.py ${{ matrix.blender }} .blender | tail -n 1)"
+          test -n "$exe"
+          echo "exe=$exe" >> "$GITHUB_OUTPUT"
 
       - name: Build, validate, install and test the extension
         run: python scripts/ci_test.py --blender "${{ steps.blender.outputs.exe }}" --report report-${{ matrix.os }}-${{ matrix.blender }}.json

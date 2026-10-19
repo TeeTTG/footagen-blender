@@ -3,7 +3,6 @@
 Operators call these; tests call them directly in background mode, where
 jobs run inline."""
 
-import platform
 import sys
 import time
 import urllib.parse
@@ -68,11 +67,15 @@ def online():
     return bool(bpy.app.online_access)
 
 
+SYSTEM_LABELS = {"macos": "macOS", "windows": "Windows", "linux": "Linux"}
+
+
 def client_info():
-    host = (platform.node() or "this computer").split(".")[0][:40]
+    # The computer's network name can be an address or a person's name, so the
+    # suggested name uses the operating system; the user renames it on approval.
     system = {"darwin": "macos", "win32": "windows"}.get(sys.platform, "linux")
     return {
-        "deviceName": f"Blender {bpy.app.version_string.split(' ')[0]} on {host}",
+        "deviceName": f"Blender {bpy.app.version_string.split(' ')[0]} on {SYSTEM_LABELS[system]}",
         "appVersion": ADDON_VERSION,
         "hostVersion": bpy.app.version_string.split(" ")[0],
         "platform": system,

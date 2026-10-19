@@ -24,7 +24,7 @@ local as well.
 
 1. `POST /v1/connect/pair/start` with
    `{ "app": "blender", "deviceName": "Blender 4.5.7 on studio-mac", "appVersion": "1.0.0", "hostVersion": "4.5.7", "platform": "macos" }`
-   → `{ "userCode": "KQ4D-7ZPX", "deviceCode": "…", "verificationUri": "<app>/connect", "verificationUriComplete": "<app>/connect?code=KQ4D7ZPX", "expiresIn": 600, "interval": 5 }`.
+   → `{ "userCode": "KQ4D-7ZPX", "deviceCode": "…", "verificationUri": "<app>/?connect", "verificationUriComplete": "<app>/?connect=KQ4D7ZPX", "expiresIn": 600, "interval": 5 }`.
    Limited per network (HTTP 429 `TooManyPairings`).
 2. The add-on shows the code and opens `verificationUriComplete` in the browser.
    The signed-in user compares the code and approves (or denies) in Footagen.
