@@ -39,6 +39,7 @@ def main():
     user_resources = tempfile.mkdtemp(prefix="footagen-blender-user-")
     dist = os.path.join(ROOT, "dist")
     env = {**os.environ, "BLENDER_USER_RESOURCES": user_resources}
+    os.makedirs(dist, exist_ok=True)  # Blender's build command does not create it
     try:
         for old in glob.glob(os.path.join(dist, "footagen-*.zip")):
             os.remove(old)
