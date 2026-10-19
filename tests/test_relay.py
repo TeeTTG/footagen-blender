@@ -132,3 +132,19 @@ def test_disconnect_in_blender_revokes_the_token():
     assert bridge.state.connection is None and addon("auth").load() is None
     response = harness.web("GET", "/v1/connect/app/session", headers={"Authorization": f"Bearer {connection['token']}"})
     assert response.status_code == 401, response.text
+
+
+def test_camera_move_reaches_footagen_with_its_track():
+    from test_move import animated_scene
+
+    bridge = addon("bridge")
+    harness.connect()
+    animated_scene()
+    bridge.send_camera_move(bpy.context, include_subjects=True)
+    entry = bridge.state.sent[0]
+    assert entry["kind"] == "camera_move" and entry["status"] == "waiting", bridge.state.message
+    inbox = [m for m in harness.web_inbox() if m["id"] == entry["id"]]
+    assert inbox and inbox[0]["kind"] == "camera_move" and inbox[0]["summary"]["hasCameraTrack"] is True
+    manifest, _parts = addon("package").read(harness.web_collect(entry["id"]))
+    assert len(manifest["cameraTrack"]["samples"]) == 48
+    assert [track["node"] for track in manifest["subjectTracks"]] == ["Anna"]

@@ -27,6 +27,24 @@ class FootagenSceneSettings(bpy.types.PropertyGroup):
         description="Send materials and textures. Off sends only base colours, which keeps transfers small",
         default=False,
     )
+    move_range: EnumProperty(
+        name="Frames",
+        items=(
+            ("SCENE", "Scene range", "Start to end of the scene"),
+            ("PREVIEW", "Preview range", "The timeline's preview range, when it is on"),
+        ),
+        default="SCENE",
+    )
+    include_subject_motion: BoolProperty(
+        name="Include subject motion",
+        description="Also send how objects marked as characters or props move (position and facing)",
+        default=True,
+    )
+    include_move_render: BoolProperty(
+        name="Include move render",
+        description="Render the move with the scene's render settings (at most 720 p) and send the video as a motion reference",
+        default=False,
+    )
     use_footagen_camera: BoolProperty(
         name="Use Footagen camera",
         description="Make the imported camera the scene camera and match the frame size to the shot",

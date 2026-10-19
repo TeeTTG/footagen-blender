@@ -91,6 +91,22 @@ class FOOTAGEN_OT_send_frame(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class FOOTAGEN_OT_send_camera_move(bpy.types.Operator):
+    bl_idname = "footagen.send_camera_move"
+    bl_label = "Send camera move"
+    bl_description = "Send the camera as Blender plays it on every frame of the range, to become the shot's camera move"
+
+    def execute(self, context):
+        settings = context.scene.footagen
+        try:
+            bridge.send_camera_move(context, settings.move_range == "PREVIEW", settings.include_subject_motion, settings.include_move_render)
+        except (FootagenError, ValueError, RuntimeError) as error:
+            return _report(self, error)
+        for warning in bridge.state.warnings:
+            self.report({"WARNING"}, warning)
+        return {"FINISHED"}
+
+
 class FOOTAGEN_OT_check_inbox(bpy.types.Operator):
     bl_idname = "footagen.check_inbox"
     bl_label = "Check now"
@@ -191,6 +207,7 @@ CLASSES = (
     FOOTAGEN_OT_disconnect,
     FOOTAGEN_OT_send,
     FOOTAGEN_OT_send_frame,
+    FOOTAGEN_OT_send_camera_move,
     FOOTAGEN_OT_check_inbox,
     FOOTAGEN_OT_import_transfer,
     FOOTAGEN_OT_set_role,

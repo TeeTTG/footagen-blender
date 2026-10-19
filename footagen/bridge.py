@@ -10,7 +10,7 @@ from contextlib import contextmanager
 
 import bpy
 
-from . import auth, jobs, package, render, scene_export, scene_import
+from . import auth, camera_move, jobs, package, render, scene_export, scene_import
 from .client import Client, ConnectionEnded, FootagenError, check_app_url, discover_api
 from .version import ADDON_VERSION
 
@@ -293,6 +293,17 @@ def send_frame(context):
     manifest["objects"] = []
     data = package.build(manifest, {"frame.png": png})
     return _upload("frame", data, f"Frame {scene.frame_current}")
+
+
+def send_camera_move(context, use_preview=False, include_subjects=True, include_render=False):
+    _require_online()
+    _client()
+    manifest, parts, warnings = camera_move.collect_move(context, use_preview, include_subjects, include_render)
+    state.warnings = warnings
+    data = package.build(manifest, parts)
+    track = manifest["cameraTrack"]
+    seconds = track["samples"][-1]["t"]
+    return _upload("camera_move", data, f"Camera move ({seconds:.1f} s)")
 
 
 # ---- Inbox and transfer status ----

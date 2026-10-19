@@ -104,6 +104,14 @@ class FOOTAGEN_PT_send(FootagenPanel, bpy.types.Panel):
         col.scale_y = 1.2
         col.operator("footagen.send", icon="EXPORT")
         col.operator("footagen.send_frame", icon="RENDER_STILL")
+        move = layout.box()
+        move.label(text="Camera move", icon="CAMERA_DATA")
+        move.prop(settings, "move_range", expand=True)
+        move.prop(settings, "include_subject_motion")
+        move.prop(settings, "include_move_render")
+        row = move.row()
+        row.enabled = bool(state.connection) and bridge.online()
+        row.operator("footagen.send_camera_move", icon="ANIM")
         if state.sent:
             box = layout.box()
             for entry in state.sent[:5]:

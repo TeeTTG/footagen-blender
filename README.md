@@ -19,6 +19,12 @@ Footagen.
   into the 3D Blocker, with each object's role (set piece, character, prop).
 - **Send frame.** Renders the current frame through the scene camera and sends
   it as the shot's composition image.
+- **Send camera move.** Sends the camera exactly as Blender plays it on every
+  frame of the scene or preview range — after constraints, rigs, drivers and
+  F-curve modifiers such as noise — including lens changes. Footagen makes it the
+  shot's camera move. **Include subject motion** adds how characters and props
+  move (position and facing); **Include move render** adds Blender's own render
+  of the move (at most 720 p) as a motion reference. Up to 60 seconds.
 - **From Footagen.** Scenes sent with *Send to Blender* in Footagen's 3D Blocker
   arrive in the Footagen tab; *Import* puts them into their own collection and
   can make the Footagen camera the scene camera. A newer version replaces the

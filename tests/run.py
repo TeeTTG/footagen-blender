@@ -57,11 +57,11 @@ def main():
     import harness
 
     harness.configure(args)
-    modules = [importlib.import_module(name) for name in ("test_package", "test_export", "test_relay")]
+    modules = [importlib.import_module(name) for name in ("test_package", "test_export", "test_move", "test_relay")]
     results = []
     for module in modules:
         for name in sorted(dir(module)):
-            if not name.startswith("test_") or (args.only and args.only not in name):
+            if not name.startswith("test_") or (args.only and args.only not in f"{module.__name__}.{name}"):
                 continue
             harness.reset_scene()
             started = time.time()
