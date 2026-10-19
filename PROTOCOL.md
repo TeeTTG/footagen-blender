@@ -26,7 +26,13 @@ local as well.
    `{ "app": "blender", "deviceName": "Blender 4.5.7 on studio-mac", "appVersion": "1.0.0", "hostVersion": "4.5.7", "platform": "macos" }`
    → `{ "userCode": "KQ4D-7ZPX", "deviceCode": "…", "verificationUri": "<app>/?connect", "verificationUriComplete": "<app>/?connect=KQ4D7ZPX", "expiresIn": 600, "interval": 5 }`.
    Limited per network (HTTP 429 `TooManyPairings`).
-2. The add-on shows the code and opens `verificationUriComplete` in the browser.
+   An optional `"appUrl": "<app>"` names the Footagen address the add-on uses.
+   The server puts the approval page on that address when it is one of the
+   deployment's own addresses; without it (add-on 1.0.0) it uses
+   `https://app.footagen.ai` when the deployment answers there. The server never
+   names a foreign address.
+2. The add-on opens `verificationUriComplete` only if it is on the same origin
+   as `<app>`, shows the code and opens it in the browser.
    The signed-in user compares the code and approves (or denies) in Footagen.
 3. The add-on polls `POST /v1/connect/pair/poll` with `{ "deviceCode": "…" }` every
    `interval` seconds:
