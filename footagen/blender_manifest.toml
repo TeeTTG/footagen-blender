@@ -1,0 +1,23 @@
+schema_version = "1.0.0"
+
+id = "footagen"
+version = "1.0.0"
+name = "Footagen for Blender"
+tagline = "Send scenes, cameras and frames between Blender and Footagen"
+maintainer = "Footagen <info@footagen.ai>"
+type = "add-on"
+website = "https://github.com/TeeTTG/footagen-blender"
+
+tags = ["Camera", "Import-Export", "Scene"]
+
+blender_version_min = "4.5.0"
+
+license = ["SPDX:GPL-3.0-or-later"]
+copyright = ["2026 Footagen"]
+
+[permissions]
+network = "Send and receive scenes through your Footagen account"
+files = "Export scenes and frames, store the connection token"
+
+[build]
+paths_exclude_pattern = ["__pycache__/", "*.pyc", "/.git/", "/tests/"]

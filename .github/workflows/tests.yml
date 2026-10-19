@@ -1,0 +1,68 @@
+name: Tests
+
+# Every change is tested on Windows, Linux and macOS with the oldest and the
+# newest supported Blender LTS, without a window. The relay is
+# tests/mock_relay.py (PROTOCOL.md); the same suite runs against a real local
+# Footagen before each release.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  blender:
+    name: Blender ${{ matrix.blender }} on ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        blender: ["4.5.14", "5.2.2"]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Libraries Blender needs on Linux
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libxi6 libxkbcommon0 libxxf86vm1 libxfixes3 libxrender1 libsm6 libgl1 libegl1
+
+      - name: Cache Blender
+        uses: actions/cache@v4
+        with:
+          path: .blender
+          key: blender-${{ matrix.blender }}-${{ runner.os }}-${{ runner.arch }}
+
+      - name: Download Blender (checksum verified)
+        id: blender
+        shell: bash
+        run: echo "exe=$(python scripts/fetch_blender.py ${{ matrix.blender }} .blender | tail -n 1)" >> "$GITHUB_OUTPUT"
+
+      - name: Build, validate, install and test the extension
+        run: python scripts/ci_test.py --blender "${{ steps.blender.outputs.exe }}" --report report-${{ matrix.os }}-${{ matrix.blender }}.json
+
+      - name: Test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: report-${{ matrix.os }}-${{ matrix.blender }}
+          path: report-${{ matrix.os }}-${{ matrix.blender }}.json
+          if-no-files-found: ignore
+
+      - name: Installable zip
+        if: matrix.os == 'ubuntu-latest' && matrix.blender == '5.2.2'
+        uses: actions/upload-artifact@v4
+        with:
+          name: footagen-blender-zip
+          path: dist/footagen-*.zip
